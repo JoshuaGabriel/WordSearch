@@ -48,8 +48,6 @@ struct ContentView: View {
                     Spacer()
                 }.scaleEffect(1)
                 
-         
-                
                 Grid_view()
                 
                 Spacer()
