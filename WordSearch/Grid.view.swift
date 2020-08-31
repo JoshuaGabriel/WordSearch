@@ -105,6 +105,84 @@ struct DrawLine:Shape{
     }
     
 }
+
+
+struct TapGestureView: View {
+    @State var tapped = false
+
+    var tap: some Gesture {
+        TapGesture(count : 1)
+            .onEnded { _ in self.tapped = !self.tapped }
+    }
+
+    var body: some View {
+        Circle()
+            .fill(self.tapped ? Color.blue : Color.red)
+            .frame(width: 25, height: 25, alignment: .center)
+            .gesture(tap)
+    }
+}
+    
+struct DragGestureView: View{
+    @State private var offset = CGSize.zero
+    @State private var isDragging = false
+    @State private var hasTimeElapsed = false
+    var letter: String
+
+    var body: some View{
+        let dragGesture = DragGesture()
+            .onChanged{ value in self.offset = value.translation
+                withAnimation{
+                    self.isDragging = true
+                }
+            }
+            .onEnded{ _ in
+                withAnimation{
+                    self.offset = .zero
+                    self.isDragging = false
+                }
+            }
+        let pressGesture = LongPressGesture(minimumDuration:0)
+            .onChanged{_ in
+                withAnimation{
+                   self.isDragging = true
+                }
+                
+            }
+            .onEnded{ value in
+                withAnimation{
+                    self.isDragging = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    withAnimation{
+                       self.isDragging = false
+                    }
+                }
+                
+        }
+        
+        let combined = pressGesture.simultaneously(with: dragGesture)
+        
+        return
+            ZStack{
+                Circle()
+                .fill(isDragging ? Color.red : Color.blue)
+                .frame(width:25,height:25)
+                .scaleEffect(isDragging ? 1.5 : 1)
+                .offset(offset)
+                .gesture(combined)
+                Text(letter)
+                    .frame(width: 25, height: 25)
+                    .scaleEffect(isDragging ? 1.5 : 1)
+                
+        }
+            
+    }
+
+
+}
+
+
 struct Grid_view: View {
     @State private var grid = ModelBoard()
     private var words = ["Swift", "Kotlin", "ObjectiveC", "Variable", "Java", "Mobile"]
@@ -120,8 +198,7 @@ struct Grid_view: View {
     @State var yPos: CGFloat = 0
 
     var body: some View {
-        GeometryReader{geometry in
-
+        
             ZStack{
                 Text("\(self.xPos) || \(self.yPos)")
                 HStack{
@@ -130,17 +207,7 @@ struct Grid_view: View {
                         VStack{
                             ForEach(0..<10){ j in
                                 ZStack{
-                                    Button(action: {
-                                        self.x_cur = i
-                                        self.y_cur = j
-                                        self.letter_cur = self.grid.lookup(i, j)
-                                        print(String(self.x_cur) + String(self.letter_cur))
-                                        
-                                    }) {
-                                       Text(self.grid.lookup(i, j))
-                                            .foregroundColor(.black)
-                                            .frame(width: 25, height: 25)
-                                    }
+                                    DragGestureView(letter:self.grid.lookup(i, j))
                                 }
                             }
                         }
@@ -148,18 +215,16 @@ struct Grid_view: View {
                     }
                 }
                 .padding(.vertical, 20.0)
-                .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                
-            
-                    .onEnded { dragGesture in
-                        self.xPos = dragGesture.location.x
-                        self.yPos = dragGesture.location.y
-
-                })
+//                .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+//                    .onEnded { dragGesture in
+//                        self.xPos = dragGesture.location.x
+//                        self.yPos = dragGesture.location.y
+//                        print(self.x_cur)
+//                })
             }
         }
             
-    }
+    
 }
 
 
