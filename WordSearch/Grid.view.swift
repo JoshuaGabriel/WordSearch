@@ -17,13 +17,26 @@ private let orientation = ["leftright","updown","diagonalup","diagonaldown"]
 
 
 struct LetterView:View{
+    
     var highlight: Bool = false
     var character: String
+    var hovering: Bool = false
+    
+//    private func check() -> Void {
+//        for point in coords{
+//            if(point.xIndex==location.xIndex && point.yIndex == location.xIndex){
+//                location.chgHovered(chg: true)
+//                break
+//            }
+//        }
+//        
+//    }
+    
     
     var body: some View{
         ZStack{
             Circle()
-                .fill(highlight ? Color.red : Color.blue)
+                .fill(hovering ? Color.red : Color.blue)
                 .frame(width:25,height:25)
                 .scaleEffect(highlight ? 1.5 : 1)
                 .animation(.easeOut(duration: 0.25))
@@ -31,24 +44,60 @@ struct LetterView:View{
                 
             Text(character)
                 .frame(width: 25, height: 25)
-                .scaleEffect(highlight ? 1.5 : 1)
+                .scaleEffect(highlight  ? 1.5 : 1)
                 .animation(.easeOut)
 
         }
     }
 }
 
-struct Point{
-    private var xIndex: Int
-    private var yIndex: Int
+class Point:Equatable{
+    var xIndex: Int
+    var yIndex: Int
+    var hovered: Bool
 
+    init(xIndex:Int, yIndex:Int,hovered: Bool = false) {
+        self.xIndex = xIndex
+        self.yIndex = yIndex
+        self.hovered = hovered
+    }
+    
     func getX()->Int{
         return self.xIndex
     }
     func getY()->Int{
         return self.yIndex
     }
+    func getHovered()->Bool{
+        return self.hovered
+    }
+//    func chgHovered(chg:Bool)->Void{
+//        self.hovered = chg
+//    }
+    
+    
+    static func == (lhs: Point, rhs: Point) -> Bool {
+        
+        if((lhs.xIndex == rhs.xIndex) && (lhs.yIndex == rhs.yIndex)){
+            return true
+        }else{
+            return false
+        }
+        
+        
+    }
 }
+
+//extension Point: Hashable {
+//    static func == (lhs: Point, rhs: Point) -> Bool {
+//        return lhs.xIndex == rhs.xIndex && lhs.yIndex == rhs.yIndex
+//    }
+//
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(xIndex)
+//        hasher.combine(yIndex)
+//    }
+//}
 
 struct ModelBoard: View{
     
@@ -62,8 +111,8 @@ struct ModelBoard: View{
     @State private var offset = CGSize.zero
     @State private var isDragging = false
     
-//    @State private var coords: [Point] = []
-    
+    @State private var coords: [Point] = []
+    private var gridReference: [Point] = []
 
     init() {
         self.squares = Array(repeating: Array(repeating: "_", count: 10), count: 10)
@@ -71,6 +120,7 @@ struct ModelBoard: View{
         for k in 0..<10{
             for j in 0..<10{
                 random_letter = String(characters[Int.random(in: 0..<26)])
+                self.gridReference.append(Point(xIndex: k, yIndex: j))
                 self.squares[k][j] = random_letter
             }
         }
@@ -81,16 +131,20 @@ struct ModelBoard: View{
 
             if geometry.frame(in: .global).contains(self.location) {
                 DispatchQueue.main.async {
+                    
+                    if(!self.coords.contains(Point(xIndex:index_i,yIndex:index_j))){
+                        self.coords.append(Point(xIndex:index_i,yIndex:index_j,hovered: true))
+                    }
+
                     self.hovering_i = index_i
                     self.hovering_j = index_j
                     self.isDragging = true
-
+                    //print("\(index_i) || \(index_j)")
                 }
             }
             return AnyView(Circle())
         }
     }
-    
     
 //    func rows(i: Int)-> some View{
 //
@@ -107,7 +161,20 @@ struct ModelBoard: View{
 //        }
 //        return side
 //    }
-        
+//    private func check() -> Bool {
+//        for point in coords{
+//            point.chgHovered(chg: true)
+//        }
+//        return false
+//    }
+//
+//    func clearHovered()->Void{
+//        for point in coords{
+//            point.chgHovered(chg: false)
+//        }
+//    }
+//
+    
     private var Grid: some View{
         ZStack{
             Text("\(self.squares[hovering_i ?? 0][hovering_j ?? 0])")
@@ -116,9 +183,10 @@ struct ModelBoard: View{
                     Spacer()
                         VStack{
                             ForEach(0..<10){ j in
-                                LetterView(highlight: self.hovering_i==i && self.hovering_j==j, character: self.squares[i][j])
+                                LetterView(highlight: ((self.hovering_i==i && self.hovering_j==j)),
+                                           character: self.squares[i][j],
+                                           hovering: self.coords.contains(Point(xIndex: i, yIndex: j)))
                                     .background(self.rectReader(index_i: i, index_j: j))
-                                
                             }
                     }
                     Spacer()
@@ -132,12 +200,7 @@ struct ModelBoard: View{
 
                 
         let hover = DragGesture(minimumDistance: 0, coordinateSpace: .global)
-//            .onChanged{ change in
-//                self.offset = change.translation
-//                withAnimation{
-//                    self.isDragging = true
-//                }
-//            }
+
             .updating($location){(value,state,transaction) in
                 state = value.location
                 
@@ -145,7 +208,7 @@ struct ModelBoard: View{
                 withAnimation{
                     self.hovering_j = nil
                     self.hovering_i = nil
-//                    self.isDragging = false
+                    self.coords.removeAll()
 
                 }
             }
