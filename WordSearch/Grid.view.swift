@@ -48,7 +48,6 @@ struct Point{
     func getY()->Int{
         return self.yIndex
     }
-
 }
 
 struct ModelBoard: View{
