@@ -65,9 +65,91 @@ class Point:Equatable{
             return false
         }
         
-        
     }
 }
+
+
+struct Step:Equatable{
+    var stepX: Int
+    var stepY: Int
+    var step: Direction
+    
+    mutating func add(first:Point)->Void{
+        
+        switch self.step {
+        case .up:
+            self.stepY-=1
+        case .down:
+            self.stepY+=1
+        case .left:
+            self.stepX-=1
+        case .right:
+            self.stepX+=1
+        case .upLeft:
+            self.stepY-=1
+            self.stepX-=1
+        case .upRight:
+            self.stepY-=1
+            self.stepX+=1
+        case .downLeft:
+            self.stepY+=1
+            self.stepX-=1
+        case .downRight:
+            self.stepY+=1
+            self.stepX+=1
+        }
+    }
+    func compare(first: Point, second: Point) -> Bool{
+        let xMove = second.xIndex - first.xIndex
+        let yMove = second.yIndex - first.yIndex
+        //let xNegate = -xMove
+        
+        
+        switch self.step{
+        case .up:
+            if(yMove==self.stepY && xMove==0){
+                return true
+            }
+        case .down:
+            if(yMove==self.stepY && xMove==0){
+                return true
+            }
+        case .left:
+            if(yMove==0 && xMove==self.stepX){
+                return true
+            }
+        case .right:
+            if(yMove==0 && xMove==self.stepX){
+                return true
+            }
+        default:
+            if(yMove==self.stepY && xMove==self.stepX){
+                return true
+            }
+        }
+        return false
+    }
+    
+    
+    static func == (lhs: Step, rhs: Step) -> Bool {
+        if((lhs.stepX == rhs.stepX) && (lhs.stepY == rhs.stepY)){
+            return true
+        }else{
+            return false
+        }
+    }
+}
+
+    enum Direction{
+        case up
+        case down
+        case left
+        case right
+        case upLeft
+        case upRight
+        case downLeft
+        case downRight
+    }
 
 
 struct ModelBoard: View{
@@ -80,8 +162,42 @@ struct ModelBoard: View{
     @GestureState private var location: CGPoint = .zero
     
     @State private var coords: [Point] = []
+    @State private var direction: Step? = nil
 //    private var gridReference: [Point] = []
 
+
+    func movement(first:Point, second:Point) -> Void{
+        let xMove = second.xIndex - first.xIndex
+        let yMove = second.yIndex - first.yIndex
+        
+        if(yMove==0){
+            if(xMove>0){
+                self.direction = Step(stepX: 1,stepY: 0,step: .right)
+            }else{
+                self.direction = Step(stepX: -1,stepY: 0,step: .left)
+            }
+        }else if(xMove==0){
+            if(yMove>0){
+                self.direction = Step(stepX: 0,stepY: 1,step: .down)
+            }else{
+                self.direction = Step(stepX: 0,stepY: -1,step: .up)
+            }
+        }else if(xMove>0){
+            if(yMove>0){
+                self.direction = Step(stepX: 1,stepY: 1,step: .downRight)
+            }else{
+                self.direction = Step(stepX: 1,stepY: -1,step: .upRight)
+            }
+        }else{
+            if(yMove>0){
+                self.direction = Step(stepX: -1,stepY: 1,step: .downLeft)
+            }else{
+                self.direction = Step(stepX: -1,stepY: -1,step: .upLeft)
+            }
+        }
+    }
+    
+    
     init() {
         self.squares = Array(repeating: Array(repeating: "_", count: 10), count: 10)
         
@@ -95,13 +211,35 @@ struct ModelBoard: View{
     }
     
     func rectReader(index_i: Int, index_j: Int) -> some View{
+        let cur = Point(xIndex:index_i,yIndex:index_j)
+        
         return GeometryReader { (geometry) -> AnyView in
 
             if geometry.frame(in: .global).contains(self.location) {
                 DispatchQueue.main.async {
                     
-                    if(!self.coords.contains(Point(xIndex:index_i,yIndex:index_j))){
-                        self.coords.append(Point(xIndex:index_i,yIndex:index_j))
+                    
+                    if(self.direction != nil){
+                        
+                        if(!self.coords.contains(cur) &&
+                            self.direction!.compare(first: self.coords[0], second: cur)){
+                            
+                            self.direction!.add(first: cur)
+                            
+                            self.coords.append(cur)
+                        }
+
+                    }else if(!self.coords.contains(cur)){
+                        self.coords.append(cur)
+                    }
+                    
+                    if(self.coords.count==2){
+                        self.movement(first: self.coords[0], second: self.coords[1])
+                        self.direction!.add(first: cur)
+                    }
+                    
+                    for i in self.coords{
+                        print("\(i.xIndex) || \(i.yIndex) || step: \(self.direction?.stepX ?? 0) || \(self.direction?.stepY ?? 0)")
                     }
 
                     self.hovering_i = index_i
@@ -147,6 +285,7 @@ struct ModelBoard: View{
                     self.hovering_j = nil
                     self.hovering_i = nil
                     self.coords.removeAll()
+                    self.direction = nil
 
                 }
             }
