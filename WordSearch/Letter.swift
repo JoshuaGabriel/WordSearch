@@ -24,9 +24,10 @@ struct Oblong:Shape{
 struct Letter: View {
     var body: some View {
 
-        Oblong()
-            .stroke(Color.red, style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
-            .frame(width: 300, height: 300)
+        Text("Hello World")
+            .onHover{_ in 
+                print("being hovered")
+        }
         
         
     }
