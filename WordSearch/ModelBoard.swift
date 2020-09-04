@@ -11,39 +11,6 @@ import Combine
 private let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 private let characters = Array(letters)
 
-
-
-
-struct LetterView:View{
-    
-    var highlight: Bool = false
-    var character: String
-    var hovering: Bool = false
-    var finished: Bool = false
-    
-    var body: some View{
-        ZStack{
-            Circle()
-                .fill(hovering || finished ? Color.red : Color.blue)
-                .frame(width:25,height:20)
-                .scaleEffect(highlight && !finished ? 1.5 : 1)
-                .animation(.easeInOut(duration: 0.25))
-            
-                
-            Text(character)
-                .frame(width: 25, height: 20)
-                .scaleEffect(highlight && !finished  ? 1.5 : 1)
-                .animation(.easeInOut)
-                .font(.system(size:18))
-            
-            
-
-        }
-    }
-}
-
-
-
 class Point:Equatable{
     var xIndex: Int
     var yIndex: Int
@@ -144,82 +111,19 @@ struct Step:Equatable{
     }
 }
 
-    enum Direction{
-        case up
-        case down
-        case left
-        case right
-        case upLeft
-        case upRight
-        case downLeft
-        case downRight
-    }
-
-struct CurrentWord: View{
-    
-    var word: String
-    
-    var body: some View{
-        Text(word)
-        .background(Color.white.opacity(0.5))
-        .cornerRadius(15)
-        .padding(.all,20)
-        .scaleEffect(1.3)
-        .frame(width: 300, height: 50)
-    }
-        
-}
-
-struct WordBox:View {
-    
-    @Binding var wordBank: [String]
-    @Binding var state: [Bool]
-    
-    var body: some View{
-        
-        VStack(alignment: .center){
-            HStack(alignment: .center, spacing: 14.0){
-                ForEach(0..<3){k in
-                    Text(self.wordBank[k])
-                        .strikethrough(self.state[k])
-                        .frame(width: 120.0, height: 55)
-                }
-            }
-            
-            HStack{
-                ForEach(3..<6){k in
-                    Text(self.wordBank[k])
-                        .strikethrough(self.state[k])
-                        .frame(width: 120.0, height: 55)
-                    
-                }
-            }
-        }       .background(Color.white.opacity(0.5))
-                .cornerRadius(20)
-    }
-}
-
-struct Score:View{
-    
-    @Binding var score:Int
-    
-    var body: some View{
-        HStack{
-            Spacer()
-            
-            Text("Words Found: " + String(self.score))
-                .padding(.all, 5.0)
-                .background(Color.white.opacity(0.5))
-                .cornerRadius(20)
-            Spacer()
-        }.scaleEffect(1.2)
-    }
+enum Direction{
+    case up
+    case down
+    case left
+    case right
+    case upLeft
+    case upRight
+    case downLeft
+    case downRight
 }
 
 struct ModelBoard: View{
 
-    
-    
     private var squares: [[String]] = []
     @ObservedObject private var board: Algorithm
     private var random_letter = "a"
@@ -245,10 +149,10 @@ struct ModelBoard: View{
         
         for k in 0..<self.grid_size{
             for j in 0..<self.grid_size{
-                random_letter = String(characters[Int.random(in: 0..<26)])
+                
 
                 if(self.squares[k][j]=="_"){
-                    self.squares[k][j] = random_letter
+                    self.squares[k][j] = String(characters[Int.random(in: 0..<26)])
                 }
 
             }
@@ -323,19 +227,17 @@ struct ModelBoard: View{
 
                     for index in 0..<self.wordBank.count{
                         if(self.wordBank[index]==self.curLetter && !self.wordBankState[index]){
-                            self.wordBankState[index] = true
                             
+                            self.wordBankState[index] = true
                             for point in self.coords{
                                 self.finished.append(point)
                             }
                             self.score += 1
-                            
                         }
                     }
                     print(self.finished.count)
                     self.hovering_i = index_i
                     self.hovering_j = index_j
-                    
                 }
             }
             return AnyView(Circle())
@@ -350,17 +252,15 @@ struct ModelBoard: View{
             ZStack{
                 HStack{
                     ForEach(0..<self.grid_size){i in
-                            VStack{
-                                ForEach(0..<self.grid_size){ j in
-                                    LetterView( highlight: ((self.hovering_i==i && self.hovering_j==j)),
-                                                character: self.squares[i][j],
-                                                hovering: self.coords.contains(Point(xIndex: i, yIndex: j)),
-                                                finished: self.finished.contains(Point(xIndex: i, yIndex: j)))
-                                        .background(self.rectReader(index_i: i, index_j: j))
-                                }
-                                
+                        VStack{
+                            ForEach(0..<self.grid_size){ j in
+                                LetterView( highlight: ((self.hovering_i==i && self.hovering_j==j)),
+                                            character: self.squares[i][j],
+                                            hovering: self.coords.contains(Point(xIndex: i, yIndex: j)),
+                                            finished: self.finished.contains(Point(xIndex: i, yIndex: j)))
+                                    .background(self.rectReader(index_i: i, index_j: j))
+                            }
                         }
-                        
                     }
                 }
             }
@@ -369,18 +269,13 @@ struct ModelBoard: View{
             Spacer()
             WordBox(wordBank: self.$wordBank,state: self.$wordBankState)
         }
-
     }
         
     
     var body: some View{
-
-                
         let hover = DragGesture(minimumDistance: 0, coordinateSpace: .global)
-
             .updating($location){(value,state,transaction) in
                 state = value.location
-                
             }.onEnded{_ in
                 withAnimation{
                     self.hovering_j = nil
@@ -390,40 +285,18 @@ struct ModelBoard: View{
                     self.curLetter = ""
                 }
             }
-        
         return
             ZStack{
                 Grid.gesture(hover)
-                
-                
-                
-        }
+            }
 
     }
     
 }
 
-
-
-
-
-struct Grid_view: View {
-
-    @Binding var wordsFound: Int
-
-    var body: some View {
-        VStack{
-
-            Text("hi")
-
-        }
-    }
-}
-
-
-struct Grid_view_Previews: PreviewProvider {
+struct ModelBoard_Previews: PreviewProvider {
     static var previews: some View {
-        Grid_view(wordsFound: Binding.constant(2))
+        ModelBoard()
     }
 }
 

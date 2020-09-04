@@ -7,23 +7,8 @@
 //
 
 import SwiftUI
-import Combine
-
-
-
-
 
 struct ContentView: View {
-    
-    @State private var score = 0
-    @State private var words_found = 0
-
-    @State private var isGameOver = false
-    
-    func buttonAction(_ index: Int) {
-        
-    }
-    
     
     var body: some View {
         
