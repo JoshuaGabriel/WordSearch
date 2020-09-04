@@ -5,15 +5,13 @@
 //  Created by Joshua Blanch on 2020-08-28.
 //  Copyright © 2020 Joshua Blanch. All rights reserved.
 //
-
 import SwiftUI
 import Combine
 
 private let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 private let characters = Array(letters)
 private let numbers = Array(repeating: 0, count: 26)
-private let words = ["Swift", "Kotlin", "ObjectiveC", "Variable", "Java", "Mobile"]
-private let orientation = ["leftright","updown","diagonalup","diagonaldown"]
+
 
 
 struct LetterView:View{
@@ -26,15 +24,18 @@ struct LetterView:View{
         ZStack{
             Circle()
                 .fill(hovering ? Color.red : Color.blue)
-                .frame(width:25,height:25)
+                .frame(width:25,height:20)
                 .scaleEffect(highlight ? 1.5 : 1)
                 .animation(.easeInOut(duration: 0.25))
             
                 
             Text(character)
-                .frame(width: 25, height: 25)
+                .frame(width: 25, height: 20)
                 .scaleEffect(highlight  ? 1.5 : 1)
                 .animation(.easeInOut)
+                .font(.system(size:18))
+            
+            
 
         }
     }
@@ -72,7 +73,7 @@ class Point:Equatable{
 struct Step:Equatable{
     var stepX: Int
     var stepY: Int
-    var step: Direction
+    var step: Direction = Direction.up
     
     mutating func add(first:Point)->Void{
         
@@ -152,9 +153,11 @@ struct Step:Equatable{
     }
 
 
+
 struct ModelBoard: View{
     
     private var squares: [[String]] = []
+    @ObservedObject private var board: Algorithm
     private var random_letter = "a"
     
     @State private var hovering_i: Int? = nil
@@ -164,7 +167,7 @@ struct ModelBoard: View{
     @State private var coords: [Point] = []
     @State private var direction: Step? = nil
 //    private var gridReference: [Point] = []
-
+    private let grid_size = 12
 
     func movement(first:Point, second:Point) -> Void{
         let xMove = second.xIndex - first.xIndex
@@ -199,13 +202,18 @@ struct ModelBoard: View{
     
     
     init() {
-        self.squares = Array(repeating: Array(repeating: "_", count: 10), count: 10)
+        self.squares = Array(repeating: Array(repeating: "_", count: self.grid_size), count: self.grid_size)
+        self.board = Algorithm(squares: self.squares)
+        self.squares = self.board.crossWord()
         
-        for k in 0..<10{
-            for j in 0..<10{
+        for k in 0..<self.grid_size{
+            for j in 0..<self.grid_size{
                 random_letter = String(characters[Int.random(in: 0..<26)])
 //                self.gridReference.append(Point(xIndex: k, yIndex: j))
-                self.squares[k][j] = random_letter
+                if(self.squares[k][j]=="_"){
+                    self.squares[k][j] = random_letter
+                }
+                
             }
         }
     }
@@ -238,9 +246,9 @@ struct ModelBoard: View{
                         self.direction!.add(first: cur)
                     }
                     
-                    for i in self.coords{
-                        print("\(i.xIndex) || \(i.yIndex) || step: \(self.direction?.stepX ?? 0) || \(self.direction?.stepY ?? 0)")
-                    }
+//                    for i in self.coords{
+//                        print("\(i.xIndex) || \(i.yIndex) || step: \(self.direction?.stepX ?? 0) || \(self.direction?.stepY ?? 0)")
+//                    }
 
                     self.hovering_i = index_i
                     self.hovering_j = index_j
@@ -252,23 +260,43 @@ struct ModelBoard: View{
     }
 
     private var Grid: some View{
-        ZStack{
-            Text("\(self.squares[hovering_i ?? 0][hovering_j ?? 0])")
-            HStack{
-                ForEach(0..<10){i in
-                    Spacer()
-                        VStack{
-                            ForEach(0..<10){ j in
-                                LetterView(highlight: ((self.hovering_i==i && self.hovering_j==j)),
-                                           character: self.squares[i][j],
-                                           hovering: self.coords.contains(Point(xIndex: i, yIndex: j)))
-                                    .background(self.rectReader(index_i: i, index_j: j))
-                            }
+        VStack{
+            Spacer()
+            ZStack{
+                Text("\(self.squares[hovering_i ?? 0][hovering_j ?? 0])")
+                HStack{
+                    ForEach(0..<self.grid_size){i in
+                        //Spacer()
+                            VStack{
+                                ForEach(0..<self.grid_size){ j in
+                                    LetterView(highlight: ((self.hovering_i==i && self.hovering_j==j)),
+                                               character: self.squares[i][j],
+                                               hovering: self.coords.contains(Point(xIndex: i, yIndex: j)))
+                                        .background(self.rectReader(index_i: i, index_j: j))
+                                }
+                                
+                        }
+                        //Spacer()
                     }
-                    Spacer()
                 }
             }
+            Spacer()
+            VStack{
+                HStack{
+                    ForEach(0..<3){k in
+                        Text(self.board.wordBank[k])
+                    }
+                }
+                HStack{
+                    ForEach(3..<6){k in
+                        Text(self.board.wordBank[k])
+                    }
+                }
+
+            }
+
         }
+
     }
         
     
@@ -309,8 +337,8 @@ struct ModelBoard: View{
 
 struct Grid_view: View {
     @State private var grid = ModelBoard()
-    private var words = ["Swift", "Kotlin", "ObjectiveC", "Variable", "Java", "Mobile"]
-    @State var numbers = [0,0,0,0,0,0]
+    
+
     
     @State private var x_cur = 0
     @State private var y_cur = 0
@@ -326,3 +354,5 @@ struct Grid_view_Previews: PreviewProvider {
         Grid_view()
     }
 }
+
+
