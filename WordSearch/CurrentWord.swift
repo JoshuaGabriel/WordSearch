@@ -14,11 +14,14 @@ struct CurrentWord: View{
     
     var body: some View{
         Text(word)
-        .background(Color.white.opacity(0.5))
-        .cornerRadius(15)
-        .padding(.all,20)
-        .scaleEffect(1.3)
-        .frame(width: 300, height: 50)
+            
+            .background(Color(red: 20/255, green: 235/255, blue: 1))
+            .cornerRadius(15)
+            .padding(.all,20)
+            .scaleEffect(1.3)
+            .frame(width: 300, height: 50)
+    
+        
     }
         
 }

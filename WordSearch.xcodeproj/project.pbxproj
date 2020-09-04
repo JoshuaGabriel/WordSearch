@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		422E5F1024F9F6FC00852ED0 /* Grid.view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422E5F0F24F9F6FC00852ED0 /* Grid.view.swift */; };
-		424FAB3924FB142E0027EBA8 /* Letter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424FAB3824FB142E0027EBA8 /* Letter.swift */; };
+		422239A62501C437001E52F0 /* WordAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422239A52501C437001E52F0 /* WordAlgorithm.swift */; };
+		428D82572502F14B00062A82 /* ModelBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428D82562502F14B00062A82 /* ModelBoard.swift */; };
+		428D82592502F1DF00062A82 /* LetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428D82582502F1DF00062A82 /* LetterView.swift */; };
+		428D825B2502F27100062A82 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428D825A2502F27100062A82 /* Score.swift */; };
+		428D825D2502F2BB00062A82 /* WordBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428D825C2502F2BB00062A82 /* WordBox.swift */; };
+		428D825F2502F3DD00062A82 /* CurrentWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428D825E2502F3DD00062A82 /* CurrentWord.swift */; };
 		42EE17F124F9BFB0001A5393 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE17F024F9BFB0001A5393 /* AppDelegate.swift */; };
 		42EE17F324F9BFB0001A5393 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE17F224F9BFB0001A5393 /* SceneDelegate.swift */; };
 		42EE17F524F9BFB0001A5393 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE17F424F9BFB0001A5393 /* ContentView.swift */; };
@@ -18,8 +22,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		422E5F0F24F9F6FC00852ED0 /* Grid.view.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.view.swift; sourceTree = "<group>"; };
-		424FAB3824FB142E0027EBA8 /* Letter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Letter.swift; sourceTree = "<group>"; };
+		422239A52501C437001E52F0 /* WordAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordAlgorithm.swift; sourceTree = "<group>"; };
+		428D82562502F14B00062A82 /* ModelBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelBoard.swift; sourceTree = "<group>"; };
+		428D82582502F1DF00062A82 /* LetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterView.swift; sourceTree = "<group>"; };
+		428D825A2502F27100062A82 /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
+		428D825C2502F2BB00062A82 /* WordBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordBox.swift; sourceTree = "<group>"; };
+		428D825E2502F3DD00062A82 /* CurrentWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWord.swift; sourceTree = "<group>"; };
 		42EE17ED24F9BFB0001A5393 /* WordSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42EE17F024F9BFB0001A5393 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		42EE17F224F9BFB0001A5393 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,9 +74,13 @@
 				42EE17F624F9BFB7001A5393 /* Assets.xcassets */,
 				42EE17FB24F9BFB7001A5393 /* LaunchScreen.storyboard */,
 				42EE17FE24F9BFB7001A5393 /* Info.plist */,
+				428D82562502F14B00062A82 /* ModelBoard.swift */,
+				428D825C2502F2BB00062A82 /* WordBox.swift */,
+				428D825E2502F3DD00062A82 /* CurrentWord.swift */,
+				428D825A2502F27100062A82 /* Score.swift */,
+				428D82582502F1DF00062A82 /* LetterView.swift */,
 				42EE17F824F9BFB7001A5393 /* Preview Content */,
-				422E5F0F24F9F6FC00852ED0 /* Grid.view.swift */,
-				424FAB3824FB142E0027EBA8 /* Letter.swift */,
+				422239A52501C437001E52F0 /* WordAlgorithm.swift */,
 			);
 			path = WordSearch;
 			sourceTree = "<group>";
@@ -152,11 +164,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				428D825B2502F27100062A82 /* Score.swift in Sources */,
 				42EE17F124F9BFB0001A5393 /* AppDelegate.swift in Sources */,
-				422E5F1024F9F6FC00852ED0 /* Grid.view.swift in Sources */,
-				424FAB3924FB142E0027EBA8 /* Letter.swift in Sources */,
+				428D82572502F14B00062A82 /* ModelBoard.swift in Sources */,
 				42EE17F324F9BFB0001A5393 /* SceneDelegate.swift in Sources */,
 				42EE17F524F9BFB0001A5393 /* ContentView.swift in Sources */,
+				428D825F2502F3DD00062A82 /* CurrentWord.swift in Sources */,
+				428D825D2502F2BB00062A82 /* WordBox.swift in Sources */,
+				428D82592502F1DF00062A82 /* LetterView.swift in Sources */,
+				422239A62501C437001E52F0 /* WordAlgorithm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

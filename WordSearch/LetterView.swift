@@ -15,10 +15,13 @@ struct LetterView:View{
     var hovering: Bool = false
     var finished: Bool = false
     
+    private let colors: [String] = ["red","orange","pink","blue","green","purple","clear"]
+    
     var body: some View{
         ZStack{
             Circle()
-                .fill(hovering || finished ? Color.red : Color.blue)
+                .fill(hovering || finished ?  Color(red: 5/255, green: 255/255, blue: 243/255) :
+                                             Color(red: 84/255, green: 158/255, blue: 1))
                 .frame(width:25,height:20)
                 .scaleEffect(highlight && !finished ? 1.5 : 1)
                 .animation(.easeInOut(duration: 0.25))

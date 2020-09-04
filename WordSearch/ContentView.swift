@@ -16,9 +16,9 @@ struct ContentView: View {
         ZStack{
             Rectangle()
                 .foregroundColor(
-                    Color(red: 0/255,
-                          green: 200/255,
-                          blue: 220/255))
+                    Color(red: 25/255,
+                          green: 59/255,
+                          blue: 104/255))
                 .edgesIgnoringSafeArea(.all)
             
             VStack{
@@ -28,7 +28,12 @@ struct ContentView: View {
                     Image("star")
                     Text("Word Search")
                         .font(.largeTitle)
-                        .fontWeight(.heavy)
+                        .fontWeight(.regular)
+                        .padding(.all, 5.0)
+                        .background(Color(red: 84/255, green: 158/255, blue: 1))
+                        .cornerRadius(20)
+                        .frame(height: 100)
+                        
                     Image("star")
                     Spacer()
                 }.scaleEffect(1)

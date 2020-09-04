@@ -18,7 +18,7 @@ struct Score:View{
             
             Text("Words Found: " + String(self.score))
                 .padding(.all, 5.0)
-                .background(Color.white.opacity(0.5))
+                .background(Color(red: 84/255, green: 158/255, blue: 1))
                 .cornerRadius(20)
             Spacer()
         }.scaleEffect(1.2)

@@ -235,7 +235,7 @@ struct ModelBoard: View{
                             self.score += 1
                         }
                     }
-                    print(self.finished.count)
+                    
                     self.hovering_i = index_i
                     self.hovering_j = index_j
                 }
