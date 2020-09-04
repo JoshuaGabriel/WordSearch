@@ -10,7 +10,7 @@ import Combine
 
 private let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 private let characters = Array(letters)
-private let numbers = Array(repeating: 0, count: 26)
+
 
 
 
@@ -19,19 +19,20 @@ struct LetterView:View{
     var highlight: Bool = false
     var character: String
     var hovering: Bool = false
+    var finished: Bool = false
     
     var body: some View{
         ZStack{
             Circle()
-                .fill(hovering ? Color.red : Color.blue)
+                .fill(hovering || finished ? Color.red : Color.blue)
                 .frame(width:25,height:20)
-                .scaleEffect(highlight ? 1.5 : 1)
+                .scaleEffect(highlight && !finished ? 1.5 : 1)
                 .animation(.easeInOut(duration: 0.25))
             
                 
             Text(character)
                 .frame(width: 25, height: 20)
-                .scaleEffect(highlight  ? 1.5 : 1)
+                .scaleEffect(highlight && !finished  ? 1.5 : 1)
                 .animation(.easeInOut)
                 .font(.system(size:18))
             
@@ -40,6 +41,8 @@ struct LetterView:View{
         }
     }
 }
+
+
 
 class Point:Equatable{
     var xIndex: Int
@@ -103,7 +106,7 @@ struct Step:Equatable{
     func compare(first: Point, second: Point) -> Bool{
         let xMove = second.xIndex - first.xIndex
         let yMove = second.yIndex - first.yIndex
-        //let xNegate = -xMove
+
         
         
         switch self.step{
@@ -152,23 +155,107 @@ struct Step:Equatable{
         case downRight
     }
 
+struct CurrentWord: View{
+    
+    var word: String
+    
+    var body: some View{
+        Text(word)
+        .background(Color.white.opacity(0.5))
+        .cornerRadius(15)
+        .padding(.all,20)
+        .scaleEffect(1.3)
+        .frame(width: 300, height: 50)
+    }
+        
+}
 
+struct WordBox:View {
+    
+    @Binding var wordBank: [String]
+    @Binding var state: [Bool]
+    
+    var body: some View{
+        
+        VStack(alignment: .center){
+            HStack(alignment: .center, spacing: 14.0){
+                ForEach(0..<3){k in
+                    Text(self.wordBank[k])
+                        .strikethrough(self.state[k])
+                        .frame(width: 120.0, height: 55)
+                }
+            }
+            
+            HStack{
+                ForEach(3..<6){k in
+                    Text(self.wordBank[k])
+                        .strikethrough(self.state[k])
+                        .frame(width: 120.0, height: 55)
+                    
+                }
+            }
+        }       .background(Color.white.opacity(0.5))
+                .cornerRadius(20)
+    }
+}
+
+struct Score:View{
+    
+    @Binding var score:Int
+    
+    var body: some View{
+        HStack{
+            Spacer()
+            
+            Text("Words Found: " + String(self.score))
+                .padding(.all, 5.0)
+                .background(Color.white.opacity(0.5))
+                .cornerRadius(20)
+            Spacer()
+        }.scaleEffect(1.2)
+    }
+}
 
 struct ModelBoard: View{
+
+    
     
     private var squares: [[String]] = []
     @ObservedObject private var board: Algorithm
     private var random_letter = "a"
-    
+    @State var score:Int = 0
     @State private var hovering_i: Int? = nil
     @State private var hovering_j: Int? = nil
+    @State private var curLetter: String = ""
+    @State var wordBank: [String] = ["SWIFT", "KOTLIN", "OBJECTIVEC", "VARIABLE", "JAVA", "MOBILE"]
+    @State var wordBankState: [Bool] = [false,false,false,false,false,false]
     @GestureState private var location: CGPoint = .zero
     
     @State private var coords: [Point] = []
+    @State private var finished: [Point] = []
     @State private var direction: Step? = nil
-//    private var gridReference: [Point] = []
     private let grid_size = 12
+    
+    
+    init() {
+        self.squares = Array(repeating: Array(repeating: "_", count: self.grid_size), count: self.grid_size)
+        self.board = Algorithm(squares: self.squares)
 
+        self.squares = self.board.crossWord()
+        
+        for k in 0..<self.grid_size{
+            for j in 0..<self.grid_size{
+                random_letter = String(characters[Int.random(in: 0..<26)])
+
+                if(self.squares[k][j]=="_"){
+                    self.squares[k][j] = random_letter
+                }
+
+            }
+        }
+    }
+
+    
     func movement(first:Point, second:Point) -> Void{
         let xMove = second.xIndex - first.xIndex
         let yMove = second.yIndex - first.yIndex
@@ -201,26 +288,10 @@ struct ModelBoard: View{
     }
     
     
-    init() {
-        self.squares = Array(repeating: Array(repeating: "_", count: self.grid_size), count: self.grid_size)
-        self.board = Algorithm(squares: self.squares)
-        self.squares = self.board.crossWord()
-        
-        for k in 0..<self.grid_size{
-            for j in 0..<self.grid_size{
-                random_letter = String(characters[Int.random(in: 0..<26)])
-//                self.gridReference.append(Point(xIndex: k, yIndex: j))
-                if(self.squares[k][j]=="_"){
-                    self.squares[k][j] = random_letter
-                }
-                
-            }
-        }
-    }
+
     
     func rectReader(index_i: Int, index_j: Int) -> some View{
         let cur = Point(xIndex:index_i,yIndex:index_j)
-        
         return GeometryReader { (geometry) -> AnyView in
 
             if geometry.frame(in: .global).contains(self.location) {
@@ -230,15 +301,18 @@ struct ModelBoard: View{
                     if(self.direction != nil){
                         
                         if(!self.coords.contains(cur) &&
-                            self.direction!.compare(first: self.coords[0], second: cur)){
+                            self.direction!.compare(first: self.coords[0], second: cur) &&
+                            !self.finished.contains(cur)){
                             
                             self.direction!.add(first: cur)
                             
                             self.coords.append(cur)
+                            self.curLetter += self.squares[index_i][index_j]
                         }
 
-                    }else if(!self.coords.contains(cur)){
+                    }else if(!self.coords.contains(cur) && !self.finished.contains(cur)){
                         self.coords.append(cur)
+                        self.curLetter += self.squares[index_i][index_j]
                     }
                     
                     if(self.coords.count==2){
@@ -246,13 +320,22 @@ struct ModelBoard: View{
                         self.direction!.add(first: cur)
                     }
                     
-//                    for i in self.coords{
-//                        print("\(i.xIndex) || \(i.yIndex) || step: \(self.direction?.stepX ?? 0) || \(self.direction?.stepY ?? 0)")
-//                    }
 
+                    for index in 0..<self.wordBank.count{
+                        if(self.wordBank[index]==self.curLetter && !self.wordBankState[index]){
+                            self.wordBankState[index] = true
+                            
+                            for point in self.coords{
+                                self.finished.append(point)
+                            }
+                            self.score += 1
+                            
+                        }
+                    }
+                    print(self.finished.count)
                     self.hovering_i = index_i
                     self.hovering_j = index_j
-
+                    
                 }
             }
             return AnyView(Circle())
@@ -261,40 +344,30 @@ struct ModelBoard: View{
 
     private var Grid: some View{
         VStack{
+            Score(score: self.$score)
+            Spacer()
             Spacer()
             ZStack{
-                Text("\(self.squares[hovering_i ?? 0][hovering_j ?? 0])")
                 HStack{
                     ForEach(0..<self.grid_size){i in
-                        //Spacer()
                             VStack{
                                 ForEach(0..<self.grid_size){ j in
-                                    LetterView(highlight: ((self.hovering_i==i && self.hovering_j==j)),
-                                               character: self.squares[i][j],
-                                               hovering: self.coords.contains(Point(xIndex: i, yIndex: j)))
+                                    LetterView( highlight: ((self.hovering_i==i && self.hovering_j==j)),
+                                                character: self.squares[i][j],
+                                                hovering: self.coords.contains(Point(xIndex: i, yIndex: j)),
+                                                finished: self.finished.contains(Point(xIndex: i, yIndex: j)))
                                         .background(self.rectReader(index_i: i, index_j: j))
                                 }
                                 
                         }
-                        //Spacer()
+                        
                     }
                 }
             }
             Spacer()
-            VStack{
-                HStack{
-                    ForEach(0..<3){k in
-                        Text(self.board.wordBank[k])
-                    }
-                }
-                HStack{
-                    ForEach(3..<6){k in
-                        Text(self.board.wordBank[k])
-                    }
-                }
-
-            }
-
+            CurrentWord(word:self.curLetter)
+            Spacer()
+            WordBox(wordBank: self.$wordBank,state: self.$wordBankState)
         }
 
     }
@@ -314,15 +387,14 @@ struct ModelBoard: View{
                     self.hovering_i = nil
                     self.coords.removeAll()
                     self.direction = nil
-
+                    self.curLetter = ""
                 }
             }
         
         return
             ZStack{
-                Grid
-                    .gesture(hover)
-               
+                Grid.gesture(hover)
+                
                 
                 
         }
@@ -336,22 +408,22 @@ struct ModelBoard: View{
 
 
 struct Grid_view: View {
-    @State private var grid = ModelBoard()
-    
 
-    
-    @State private var x_cur = 0
-    @State private var y_cur = 0
+    @Binding var wordsFound: Int
 
     var body: some View {
-            self.grid
+        VStack{
+
+            Text("hi")
+
+        }
     }
 }
 
 
 struct Grid_view_Previews: PreviewProvider {
     static var previews: some View {
-        Grid_view()
+        Grid_view(wordsFound: Binding.constant(2))
     }
 }
 

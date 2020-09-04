@@ -10,7 +10,9 @@ import SwiftUI
 
 class Algorithm: ObservableObject{
     @Published var squares: [[String]]
-    @Published var wordBank: [String] = ["SWIFT", "KOTLIN", "OBJECTIVEC", "VARIABLE", "JAVA", "MOBILE"]
+    private var wordBank: [String] = ["SWIFT", "KOTLIN", "OBJECTIVEC", "VARIABLE", "JAVA", "MOBILE"]
+    
+    
     private let directions = ["leftright","updown","diagonaldown","diagonalup"]
     private var orientation: String
     private var step: Step
@@ -21,6 +23,8 @@ class Algorithm: ObservableObject{
     private var condition : Bool
     private var placed : Bool
     private let grid_size = 12
+    
+    
     init(squares:[[String]]){
         self.squares = squares
         self.orientation = ""
@@ -41,7 +45,7 @@ class Algorithm: ObservableObject{
             self.placed = false
             
             while(!self.placed){
-                //print(word)
+                
                 orientation = directions.randomElement()!
                 
                 if(orientation=="leftright"){
