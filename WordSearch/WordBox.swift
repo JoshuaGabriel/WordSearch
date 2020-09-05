@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+
+/*
+    Presents the word bank at the bottom of the screen, 'state' variable checks to see if a word is found and is updated accordingly in the parent view
+ */
 struct WordBox:View {
     
     @Binding var wordBank: [String]
@@ -32,7 +36,7 @@ struct WordBox:View {
                     
                 }
             }
-        }       //.background(Color(red: 84/255, green: 158/255, blue: 1))
+        }       
                 .background(Color.yellow)
                 .cornerRadius(20)
     }

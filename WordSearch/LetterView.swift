@@ -8,6 +8,16 @@
 
 import SwiftUI
 
+/*
+    Represents each individual letter on the grid, this struct is called how many times there are bubbles on the grid
+ 
+ Boolean values:
+    highlight - has been passed by
+    hovering -  where the mouse is currently hovering
+    finished - if the word has been found keep it highlighted
+ */
+
+
 struct LetterView:View{
     
     var highlight: Bool = false

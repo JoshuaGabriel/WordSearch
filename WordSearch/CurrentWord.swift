@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+/*
+    Presents the current word being highlighted 
+ */
+
 struct CurrentWord: View{
     
     var word: String
@@ -17,9 +21,8 @@ struct CurrentWord: View{
             .frame(width: 150, height: 50/1.3)
             .background(Color.orange)
             
-            //.background(Color(red: 20/255, green: 235/255, blue: 1))
+
             .cornerRadius(15)
-            //.padding(.all,20)
             .scaleEffect(1.3)
             .frame(width: 300, height: 50)
     

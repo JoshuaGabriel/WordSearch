@@ -8,6 +8,11 @@
 
 import SwiftUI
 
+
+/*
+    Presents how many words has been found 
+ */
+
 struct Score:View{
     
     @Binding var score:Int

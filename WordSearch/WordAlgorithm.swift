@@ -8,6 +8,11 @@
 
 import SwiftUI
 
+/*
+    This class is incharge of finding a valid space to put the word on the grid
+ */
+
+
 class Algorithm: ObservableObject{
     @Published var squares: [[String]]
     private var wordBank: [String] = ["SWIFT", "KOTLIN", "OBJECTIVEC", "VARIABLE", "JAVA", "MOBILE"]
@@ -37,7 +42,7 @@ class Algorithm: ObservableObject{
         self.condition = false
 
     }
-    
+
     func crossWord() -> [[String]]{
 
         for word in wordBank{
@@ -82,7 +87,6 @@ class Algorithm: ObservableObject{
                     self.cur = Step(stepX: self.start.stepX + i*step.stepX,
                                     stepY: self.start.stepY + i*step.stepY)
                     
-                    //print("\(String(self.squares[self.cur.stepX][self.cur.stepY]) == String("_")) || \(word)")
                     if(self.squares[self.cur.stepX][self.cur.stepY] == String("_")){
                         
                         continue
@@ -96,7 +100,7 @@ class Algorithm: ObservableObject{
                 if(self.condition){
                     continue
                 }else{
-//                    print("placing")
+
                     for num in 0..<word.count{
                         
 

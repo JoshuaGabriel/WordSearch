@@ -10,18 +10,13 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var reset: Bool = false
-    
-    
     var body: some View {
-        
-        
+
         ZStack{
             Rectangle()
             .foregroundColor(Color(red: 27/255, green: 27/255, blue: 27/255))
                     .edgesIgnoringSafeArea(.all)
-                       
-            
+                
             VStack{
                 Spacer()
                 HStack{
@@ -43,8 +38,6 @@ struct ContentView: View {
                 
                 Spacer()
                 ModelBoard()
-              
-                
                 Spacer()
 
             }
