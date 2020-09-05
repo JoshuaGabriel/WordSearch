@@ -32,7 +32,8 @@ struct WordBox:View {
                     
                 }
             }
-        }       .background(Color(red: 84/255, green: 158/255, blue: 1))
+        }       //.background(Color(red: 84/255, green: 158/255, blue: 1))
+                .background(Color.yellow)
                 .cornerRadius(20)
     }
 }

@@ -20,9 +20,8 @@ struct LetterView:View{
     var body: some View{
         ZStack{
             Circle()
-                .fill(hovering || finished ?  Color(red: 5/255, green: 255/255, blue: 243/255) :
-                                             Color(red: 84/255, green: 158/255, blue: 1))
-                .frame(width:25,height:20)
+                .fill(hovering || finished ?  Color.orange : Color.yellow)
+                .frame(width:23,height:23)
                 .scaleEffect(highlight && !finished ? 1.5 : 1)
                 .animation(.easeInOut(duration: 0.25))
             

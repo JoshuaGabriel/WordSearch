@@ -126,7 +126,6 @@ struct ModelBoard: View{
 
     private var squares: [[String]] = []
     @ObservedObject private var board: Algorithm
-    private var random_letter = "a"
     @State var score:Int = 0
     @State private var hovering_i: Int? = nil
     @State private var hovering_j: Int? = nil
@@ -244,26 +243,38 @@ struct ModelBoard: View{
         }
     }
 
-    private var Grid: some View{
-        VStack{
-            Score(score: self.$score)
-            Spacer()
-            Spacer()
-            ZStack{
-                HStack{
-                    ForEach(0..<self.grid_size){i in
-                        VStack{
-                            ForEach(0..<self.grid_size){ j in
-                                LetterView( highlight: ((self.hovering_i==i && self.hovering_j==j)),
-                                            character: self.squares[i][j],
-                                            hovering: self.coords.contains(Point(xIndex: i, yIndex: j)),
-                                            finished: self.finished.contains(Point(xIndex: i, yIndex: j)))
-                                    .background(self.rectReader(index_i: i, index_j: j))
-                            }
+    private func LetterGrid()->some View{
+        return ZStack{
+            HStack{
+                ForEach(0..<self.grid_size){i in
+                    VStack{
+                        ForEach(0..<self.grid_size){ j in
+                            LetterView( highlight: ((self.hovering_i==i && self.hovering_j==j)),
+                                        character: self.squares[i][j],
+                                        hovering: self.coords.contains(Point(xIndex: i, yIndex: j)),
+                                        finished: self.finished.contains(Point(xIndex: i, yIndex: j)))
+                                .background(self.rectReader(index_i: i, index_j: j))
                         }
                     }
                 }
             }
+        }
+    }
+    
+    private var Grid: some View{
+        VStack{
+            HStack{
+                Image(systemName: "arrow.clockwise.circle")
+                    .foregroundColor(Color.yellow)
+                    .scaleEffect(1.8)
+                    .frame(width: 50, height: 50)
+                    
+                Score(score: self.$score)
+                Spacer()
+            }
+            Spacer()
+            Spacer()
+            LetterGrid()
             Spacer()
             CurrentWord(word:self.curLetter)
             Spacer()

@@ -14,10 +14,12 @@ struct CurrentWord: View{
     
     var body: some View{
         Text(word)
+            .frame(width: 150, height: 50/1.3)
+            .background(Color.orange)
             
-            .background(Color(red: 20/255, green: 235/255, blue: 1))
+            //.background(Color(red: 20/255, green: 235/255, blue: 1))
             .cornerRadius(15)
-            .padding(.all,20)
+            //.padding(.all,20)
             .scaleEffect(1.3)
             .frame(width: 300, height: 50)
     
@@ -28,6 +30,6 @@ struct CurrentWord: View{
 
 struct CurrentWord_Previews: PreviewProvider {
     static var previews: some View {
-        CurrentWord(word:"Example")
+        CurrentWord(word:"QWERTYUIOPAS")
     }
 }

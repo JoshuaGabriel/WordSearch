@@ -15,11 +15,9 @@ struct ContentView: View {
         
         ZStack{
             Rectangle()
-                .foregroundColor(
-                    Color(red: 25/255,
-                          green: 59/255,
-                          blue: 104/255))
-                .edgesIgnoringSafeArea(.all)
+            .foregroundColor(Color(red: 27/255, green: 27/255, blue: 27/255))
+                    .edgesIgnoringSafeArea(.all)
+                       
             
             VStack{
                 Spacer()
@@ -30,7 +28,7 @@ struct ContentView: View {
                         .font(.largeTitle)
                         .fontWeight(.regular)
                         .padding(.all, 5.0)
-                        .background(Color(red: 84/255, green: 158/255, blue: 1))
+                        .background(Color.yellow)
                         .cornerRadius(20)
                         .frame(height: 100)
                         
