@@ -1,4 +1,4 @@
-# WordSearch
+# WordSearch Shopify Challenge IOS
 
 
 ![App Demo](gifs/WordSearch.gif)
