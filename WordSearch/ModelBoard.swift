@@ -137,19 +137,22 @@ struct ModelBoard: View{
     @State private var coords: [Point] = []
     @State private var finished: [Point] = []
     @State private var direction: Step? = nil
+    @State private var gameOver: Bool = false
+
+  
     private let grid_size = 12
     
     
     init() {
+       
         self.squares = Array(repeating: Array(repeating: "_", count: self.grid_size), count: self.grid_size)
         self.board = Algorithm(squares: self.squares)
-
         self.squares = self.board.crossWord()
+        
         
         for k in 0..<self.grid_size{
             for j in 0..<self.grid_size{
-                
-
+            
                 if(self.squares[k][j]=="_"){
                     self.squares[k][j] = String(characters[Int.random(in: 0..<26)])
                 }
@@ -157,8 +160,8 @@ struct ModelBoard: View{
             }
         }
     }
-
     
+
     func movement(first:Point, second:Point) -> Void{
         let xMove = second.xIndex - first.xIndex
         let yMove = second.yIndex - first.yIndex
@@ -210,6 +213,7 @@ struct ModelBoard: View{
                             self.direction!.add(first: cur)
                             
                             self.coords.append(cur)
+                            
                             self.curLetter += self.squares[index_i][index_j]
                         }
 
@@ -232,6 +236,9 @@ struct ModelBoard: View{
                                 self.finished.append(point)
                             }
                             self.score += 1
+                            if(self.score == 6){
+                                self.gameOver = true
+                            }
                         }
                     }
                     
@@ -263,15 +270,12 @@ struct ModelBoard: View{
     
     private var Grid: some View{
         VStack{
-            HStack{
-                Image(systemName: "arrow.clockwise.circle")
-                    .foregroundColor(Color.yellow)
-                    .scaleEffect(1.8)
-                    .frame(width: 50, height: 50)
-                    
-                Score(score: self.$score)
-                Spacer()
-            }
+
+                
+            Score(score: self.$score)
+
+                
+            
             Spacer()
             Spacer()
             LetterGrid()
@@ -279,6 +283,8 @@ struct ModelBoard: View{
             CurrentWord(word:self.curLetter)
             Spacer()
             WordBox(wordBank: self.$wordBank,state: self.$wordBankState)
+        } .alert(isPresented: self.$gameOver) {
+            Alert(title: Text("You won!"), message: Text("Thank you for playing"), dismissButton: .default(Text("Got it!")))
         }
     }
         

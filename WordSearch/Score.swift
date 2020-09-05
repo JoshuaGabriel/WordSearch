@@ -13,17 +13,18 @@ struct Score:View{
     @Binding var score:Int
     
     var body: some View{
-        HStack(alignment: .center){
-            Spacer()
+        
             
-            Text("Words Found: " + String(self.score))
-                .multilineTextAlignment(.center)
-                .padding([.top, .bottom, .trailing], 3.0)
-                .background(Color.yellow)
+            
+        Text("Words Found: " + String(self.score))
+        .frame(width: 140, height: 45)
+            .multilineTextAlignment(.center)
+            .padding(.all, 3.0)
+            .background(Color.yellow)
 
-                .cornerRadius(20)
-            Spacer()
-        }.scaleEffect(1.2)
+            .cornerRadius(20)
+        
+            .scaleEffect(1.2)
     }
 }
 

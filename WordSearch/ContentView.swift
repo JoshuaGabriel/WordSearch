@@ -10,6 +10,9 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @State var reset: Bool = false
+    
+    
     var body: some View {
         
         
@@ -27,18 +30,20 @@ struct ContentView: View {
                     Text("Word Search")
                         .font(.largeTitle)
                         .fontWeight(.regular)
-                        .padding(.all, 5.0)
+                        .padding(.all, 14.0)
                         .background(Color.yellow)
                         .cornerRadius(20)
-                        .frame(height: 100)
-                        
+                        .frame(width:250.0,height: 100)
+          
                     Image("star")
                     Spacer()
+
+
                 }.scaleEffect(1)
                 
                 Spacer()
-                                
                 ModelBoard()
+              
                 
                 Spacer()
 
